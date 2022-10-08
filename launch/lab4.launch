@@ -1,0 +1,5 @@
+<launch>
+    <arg name = "ns" default = "robot0"/>
+    <node name="publisher_node" type="publisher_node" pkg="lab4" ns = "$(arg ns)"/>
+    
+</launch>
