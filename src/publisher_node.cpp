@@ -4,6 +4,13 @@
 #include <sensor_msgs/LaserScan.h>
 #include <sstream>
 
+// Create a global to hold a pointer to the Publisher.
+ros::Publisher *p_cmd_pub;
+
+void des_vel_Callback(const geometry_msgs::Twist::ConstPtr& msg)
+{
+    p_cmd_pub->publish(msg);
+}
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
@@ -45,8 +52,13 @@ int main(int argc, char **argv)
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher twist_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+  ros::Publisher cmd_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+// After creating the Publisher handle, assign the pointer the address of the new Publisher
+    p_cmd_pub = &cmd_pub;
+// Inside the callback, it is now possible to publish to the topic.
+// p_pub, however, is a pointer, so the syntax is slightly different
 
+    ros::Subscriber sub = n.subscribe("des_vel", 1000, des_vel_Callback);
   ros::Rate loop_rate(10);
 
   /**
@@ -72,7 +84,7 @@ int main(int argc, char **argv)
      * given as a template parameter to the advertise<>() call, as was done
      * in the constructor above.
      */
-    twist_pub.publish(msg);
+    p_cmd_pub->publish(msg);
 
     ros::spinOnce();
 
