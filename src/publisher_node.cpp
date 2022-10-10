@@ -1,16 +1,69 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
-#include <sensor_msgs/LaserScan.h>
+#include "sensor_msgs/LaserScan.h"
 #include <sstream>
 
 // Create a global to hold a pointer to the Publisher.
 ros::Publisher *p_cmd_pub;
 
+bool too_close = false;
+bool moving_forward = true;
+geometry_msgs::Twist cur_msg;
+
+float previous_x = 0;
+
+void stop_moving(){
+    if(too_close && moving_forward){
+        
+        cur_msg.linear.x = 0.0;
+        p_cmd_pub->publish(cur_msg);
+        ROS_WARN("THE ROBOT HAS BEEN STOPPED FOR BEING TOO CLOSE TO THE WALL, BACK AWAY OR ROTATE TO CONTINUE MOVING");
+    }else{
+        cur_msg.linear.x = previous_x;
+        p_cmd_pub->publish(cur_msg);
+    }
+}
+
 void des_vel_Callback(const geometry_msgs::Twist::ConstPtr& msg)
 {
-    p_cmd_pub->publish(msg);
+    if(msg->linear.x > 0){
+        moving_forward = true;
+    }else if(msg->linear.x <= 0){
+        moving_forward = false;
+    }
+    
+    previous_x = msg->linear.x;
+    
+    cur_msg.linear.x = msg->linear.x;
+    cur_msg.linear.y = msg->linear.y;
+    cur_msg.linear.z = msg->linear.z;
+    cur_msg.angular.x = msg->angular.x;
+    cur_msg.angular.y = msg->angular.y;
+    cur_msg.angular.z = msg->angular.z;
+    
+    stop_moving();
 }
+
+void laserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+    bool check = false;
+    for(int i = 90; i < 180; i++){
+        if(msg->ranges[i] <= 1){
+            too_close = true;
+            check = true;
+        }
+    }
+    
+    if(check == false){
+        too_close = false;
+    }
+    
+    stop_moving();
+    
+    ROS_INFO("LaserScan sequence number is: %i \n", msg->header.seq);
+}
+
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
@@ -59,6 +112,7 @@ int main(int argc, char **argv)
 // p_pub, however, is a pointer, so the syntax is slightly different
 
     ros::Subscriber sub = n.subscribe("des_vel", 1000, des_vel_Callback);
+    ros::Subscriber laserSub = n.subscribe("laser_1", 1000, laserScanCallback);
   ros::Rate loop_rate(10);
 
   /**
@@ -84,7 +138,7 @@ int main(int argc, char **argv)
      * given as a template parameter to the advertise<>() call, as was done
      * in the constructor above.
      */
-    p_cmd_pub->publish(msg);
+//    p_cmd_pub->publish(msg);
 
     ros::spinOnce();
 

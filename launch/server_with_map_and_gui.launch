@@ -2,7 +2,7 @@
     <arg name = "ns" default = "robot0"/>
 	<include file="$(find stdr_robot)/launch/robot_manager.launch" />
 	<include file="$(find lab4)/launch/lab4.launch" >
-	    <arg name = "ns" value "$(arg ns)" />
+	    <arg name = "ns" value = "$(arg ns)" />
 	
 	</include>
 	
