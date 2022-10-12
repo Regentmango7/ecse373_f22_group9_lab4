@@ -4,18 +4,19 @@
 #include "sensor_msgs/LaserScan.h"
 #include <sstream>
 
-// Create a global to hold a pointer to the Publisher.
+// Create a global to hold a pointer to the Publisher
 ros::Publisher *p_cmd_pub;
 
+bool laser = false;
 bool too_close = false;
 bool moving_forward = true;
+bool is_cur_msg = false;
 geometry_msgs::Twist cur_msg;
 
 float previous_x = 0;
 
 void stop_moving(){
     if(too_close && moving_forward){
-        
         cur_msg.linear.x = 0.0;
         p_cmd_pub->publish(cur_msg);
         ROS_WARN("THE ROBOT HAS BEEN STOPPED FOR BEING TOO CLOSE TO THE WALL, BACK AWAY OR ROTATE TO CONTINUE MOVING");
@@ -35,6 +36,7 @@ void des_vel_Callback(const geometry_msgs::Twist::ConstPtr& msg)
     
     previous_x = msg->linear.x;
     
+    is_cur_msg = true;
     cur_msg.linear.x = msg->linear.x;
     cur_msg.linear.y = msg->linear.y;
     cur_msg.linear.z = msg->linear.z;
@@ -47,6 +49,7 @@ void des_vel_Callback(const geometry_msgs::Twist::ConstPtr& msg)
 
 void laserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
+    laser = true;
     bool check = false;
     for(int i = 90; i < 180; i++){
         if(msg->ranges[i] <= 1){
@@ -125,13 +128,19 @@ int main(int argc, char **argv)
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
+     if (count % 200 == 0 && is_cur_msg == false){
+        ROS_INFO("No directions given to robot.");
+     }
+     if (count % 200 == 0 && laser == false){
+        ROS_INFO("No LIDAR data received.");
+     }
     geometry_msgs::Twist msg;
 
     /* msg.linear = Vector3(0, 0, 0);*/
     /* msg.angular = Vector3(0, 0, 0);*/
 
     
-
+                            
     /**
      * The publish() function is how you send messages. The parameter
      * is the message object. The type of this object must agree with the type

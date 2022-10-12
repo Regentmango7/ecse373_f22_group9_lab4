@@ -8,16 +8,20 @@ project(lab4)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  rqt_gui
+
+    rqt_gui
     stdr_launchers
     stdr_msgs
     stdr_resources
-
     stdr_parser
     stdr_robot
     stdr_samples
     stdr_server
     stdr_gui
+    std_msgs
+    geometry_msgs
+    sensor_msgs
+    roscpp
 
 )
 

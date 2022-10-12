@@ -1,8 +1,9 @@
 <launch>
-    <arg name = "ns" default = "robot0"/>
+    
+    <arg name = "nr" default = "1"/>
 	<include file="$(find stdr_robot)/launch/robot_manager.launch" />
-	<include file="$(find lab4)/launch/lab4.launch" >
-	    <arg name = "ns" value = "$(arg ns)" />
+	<include file="$(find lab4)/launch/add_node.launch" >
+        <arg name = "nr" value = "$(arg nr)" />
 	
 	</include>
 	
@@ -13,3 +14,6 @@
 	<include file="$(find stdr_gui)/launch/stdr_gui.launch"/>
 	
 </launch>
+
+
+ 

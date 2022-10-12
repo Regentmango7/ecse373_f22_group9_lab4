@@ -1,0 +1,18 @@
+<launch>
+<!--    <arg name = "ns" default = "robot0"/>
+    <node name="$(arg ns)" type="publisher_node" pkg="lab4" ns = "$(arg ns)"/> -->
+    <!-- start node -->
+    
+    
+   <arg name="nr" default="1"/> 
+   <group ns="$(eval 'robot' + str(arg('nr')-1))">
+      <node name="$(eval 'robot' + str(arg('nr')-1))" pkg="lab4" type="publisher_node" output="screen"/>
+   </group>
+
+   <!-- recursively start new node -->
+   <include file="$(find lab4)/launch/add_node.launch" if="$(eval arg('nr') - 1 > 0)">
+       <arg name="nr" value="$(eval arg('nr') - 1)"/>
+   </include>
+  
+    
+</launch>

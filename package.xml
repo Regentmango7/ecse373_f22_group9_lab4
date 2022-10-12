@@ -49,28 +49,34 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>rqt_gui</build_depend>
 
+    <build_depend>geometry_msgs</build_depend>
+    <build_depend>roscpp</build_depend>
+    <build_depend>rqt_gui</build_depend>  
+    <build_depend>sensor_msgs</build_depend>
+    <build_depend>stdr_gui</build_depend>
     <build_depend>stdr_launchers</build_depend>
     <build_depend>stdr_msgs</build_depend>
-    <build_depend>stdr_resources</build_depend>
-
     <build_depend>stdr_parser</build_depend>
+    <build_depend>stdr_resources</build_depend>
     <build_depend>stdr_robot</build_depend>
     <build_depend>stdr_samples</build_depend>
     <build_depend>stdr_server</build_depend>
-    <build_depend>stdr_gui</build_depend>
+    <build_depend>std_msgs</build_depend>
     
-        <build_export_depend>stdr_launchers</build_export_depend>
+    <build_export_depend>geometry_msgs</build_export_depend>
+    <build_export_depend>roscpp</build_export_depend>
+    <build_export_depend>rqt_gui</build_export_depend>  
+    <build_export_depend>sensor_msgs</build_export_depend>
+    <build_export_depend>stdr_gui</build_export_depend>
+    <build_export_depend>stdr_launchers</build_export_depend>
     <build_export_depend>stdr_msgs</build_export_depend>
-    <build_export_depend>stdr_resources</build_export_depend>
-
     <build_export_depend>stdr_parser</build_export_depend>
+    <build_export_depend>stdr_resources</build_export_depend>
     <build_export_depend>stdr_robot</build_export_depend>
     <build_export_depend>stdr_samples</build_export_depend>
     <build_export_depend>stdr_server</build_export_depend>
-    <build_export_depend>stdr_gui</build_export_depend>
-  <build_export_depend>rqt_gui</build_export_depend>
+    <build_export_depend>std_msgs</build_export_depend>
 
   <exec_depend>rqt_gui</exec_depend>
 
