@@ -6,23 +6,29 @@
 
 // Create a global to hold a pointer to the Publisher
 ros::Publisher *p_cmd_pub;
+std::string ns = ros::this_node::getName();
 
 bool laser = false;
 bool too_close = false;
 bool moving_forward = true;
 bool is_cur_msg = false;
 geometry_msgs::Twist cur_msg;
-
+bool stopped = false;
 float previous_x = 0;
 
 void stop_moving(){
+ 
     if(too_close && moving_forward){
+        
         cur_msg.linear.x = 0.0;
         p_cmd_pub->publish(cur_msg);
-        ROS_WARN("THE ROBOT HAS BEEN STOPPED FOR BEING TOO CLOSE TO THE WALL, BACK AWAY OR ROTATE TO CONTINUE MOVING");
+        if (!stopped) {ROS_WARN("ROBOT HAS BEEN STOPPED FOR BEING TOO CLOSE TO THE WALL, BACK AWAY OR ROTATE TO CONTINUE MOVING");}
+        stopped = true;
     }else{
         cur_msg.linear.x = previous_x;
         p_cmd_pub->publish(cur_msg);
+        if (stopped){ROS_INFO("Robot is clear of any walls and can move forward.");}
+        stopped = false;
     }
 }
 
@@ -64,7 +70,6 @@ void laserScanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
     
     stop_moving();
     
-    ROS_INFO("LaserScan sequence number is: %i \n", msg->header.seq);
 }
 
 /**
@@ -132,7 +137,7 @@ int main(int argc, char **argv)
         ROS_INFO("No directions given to robot.");
      }
      if (count % 200 == 0 && laser == false){
-        ROS_INFO("No LIDAR data received.");
+        ROS_INFO("No LIDAR data received from robot.");
      }
     geometry_msgs::Twist msg;
 
